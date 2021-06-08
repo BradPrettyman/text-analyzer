@@ -58,8 +58,25 @@ function mostCommonWords(text) {
   return newArray.sort().reverse();
 }
 
-// UI Logic
+function omitsOffensive (text) {
+  let array = text.split(' ');
+  let result = [];
 
+  array.forEach(function(element){
+    if(element !== "zoinks" && element !== "muppeteer" && element !== "biffaroni" && element !== "loopdaloop")
+    {
+      result.push(element);
+    }
+    else{
+      result.push("****");
+    }
+  });
+
+  return result.join(" ");
+}
+
+// UI Logic
+//   element = "Tappletini"  word = "apple"
 function boldPassage(word, text) {
   if (noInputtedWord(word, text)) {
     return "";
@@ -67,9 +84,11 @@ function boldPassage(word, text) {
   let htmlString = "<p>";
   let textArray = text.split(" ");
   textArray.forEach(function(element, index) {
-    if (word === element) {
-      htmlString = htmlString.concat("<b>" + element + "</b>");
-    } else {
+    if (element.indexOf(word) >= 0) {
+      let number = element.indexOf(word)
+      htmlString = htmlString.concat(element.substring(0, number) + "<b>" + element.substring(number, number + word.length) + "</b>" + element.substring(number + word.length));
+    }
+    else {
       htmlString = htmlString.concat(element);
     }
     if (index !== (textArray.length - 1)) {
@@ -87,6 +106,8 @@ $(document).ready(function(){
     const wordCount = wordCounter(passage);
     const occurrencesOfWord = numberOfOccurrencesInText(word, passage);
     const arrayResults = mostCommonWords(passage);
+    const omitsResult = omitsOffensive(passage);
+
     $("#total-count").html(wordCount);
     $("#selected-count").html(occurrencesOfWord);
 
@@ -95,6 +116,8 @@ $(document).ready(function(){
     $("ul").append("<li>" + arrayResults[0].substring(2) + ": " + arrayResults[0].substring(0,1) + "</li>");
     $("ul").append("<li>" + arrayResults[1].substring(2) + ": " + arrayResults[1].substring(0,1) + "</li>");
     $("ul").append("<li>" + arrayResults[2].substring(2) + ": " + arrayResults[2].substring(0,1) +  "</li>");
+    $("#offensive").html(omitsResult);
+
   });
 });
 
